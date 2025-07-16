@@ -1,0 +1,27 @@
+name: BATS
+
+on: [push, pull_request]
+
+jobs:
+  shellcheck:
+    name: Shellcheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run ShellCheck
+        uses: ludeeus/action-shellcheck@master
+
+  bats:
+    runs-on: ubuntu-latest
+    name: Bash unit tests
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup bats
+        id: setup-bats
+        uses: bats-core/bats-action@3.0.0
+      - name: Run bats
+        shell: bash
+        env:
+          BATS_LIB_PATH: ${{ steps.setup-bats.outputs.lib-path }}
+        run: bats test
